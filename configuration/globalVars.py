@@ -15,4 +15,4 @@ def init():
 def getConfig():
    global config
    config = ConfigParser.RawConfigParser()
-   config.read('config.txt')
+   config.read('configuration/config.txt')
