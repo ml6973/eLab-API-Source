@@ -3,7 +3,8 @@ import requests
 import json
 
 def auth():
-    url = 'http://129.114.110.198:5000/v2.0/tokens'
+    #url = 'http://129.114.110.198:5000/v2.0/tokens'
+    url = globalVars.authURL
     
     body = {"auth" : 
                {"tenantName": "admin",

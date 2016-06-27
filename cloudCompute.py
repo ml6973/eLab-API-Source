@@ -3,11 +3,10 @@ import requests
 import json
 
 def bootVM(token_id):
-    url2 = 'http://129.114.110.198:8774/v2.1/' + globalVars.tenant_id + '/servers'
-    print url2
+    url2 = globalVars.computeURL.format(globalVars.tenant_id) #Replaces {0} from config file with the appropriate tenant id
 
     body = {"server": 
-                {"name": "greg-server-test",
+                {"name": "server-test",
                  "imageRef": "eec1fa2e-a8ba-4725-ab6c-2c65acb958fc",
                  "flavorRef": "1"}}
 
