@@ -1,5 +1,5 @@
-import cloudAuth
-import cloudCompute
+import cloudModules.cloudAuth as cloudAuth
+import cloudModules.cloudCompute as cloudCompute
 import globalVars
 
 globalVars.init()  #Initialize global variables
