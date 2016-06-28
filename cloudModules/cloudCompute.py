@@ -24,3 +24,11 @@ def deleteVM(token_id, server_id):
 
     r = requests.delete(url, headers=my_headers)
     print r
+
+def queryVM(token_id, server_id):
+    url = globalVars.computeURL.format(globalVars.tenant_id) + '/' + server_id
+
+    my_headers = {"X-Auth-Token": token_id}
+
+    r = requests.get(url, headers=my_headers)
+    print r
