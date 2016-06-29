@@ -3,7 +3,8 @@ import requests
 import json
 
 def bootVM(token_id):
-    url2 = globalVars.computeURL.format(globalVars.tenant_id) #Replaces {0} from config file with the appropriate tenant id
+    #Replaces {0} from config file with the appropriate tenant id
+    url2 = globalVars.computeURL.format(globalVars.tenant_id) 
 
     body = {"server": 
                 {"name": "server-test1",
