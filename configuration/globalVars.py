@@ -12,6 +12,9 @@ def init():
    global computeURL
    computeURL = config.get('GlobalInformation', 'ComputeURL')
 
+   global baseURL
+   baseURL = config.get('GlobalInformation', 'BaseURL')
+
 def getConfig():
    global config
    config = ConfigParser.RawConfigParser()
