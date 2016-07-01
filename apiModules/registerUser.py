@@ -8,11 +8,10 @@ import time
 from peewee import *
 
 def registerUser(uname, my_token_id):
-
     this_user = dbFunctions.getOrCreateUser(uname)
     createNewUserInstances(uname, my_token_id)
 
-def createNewUserInstances(uname, my_token_id)
+def createNewUserInstances(uname, my_token_id):
     for this_image in dbFunctions.Image.select():
         instance_name = uname + '-' + str(this_image.id)
         compute_id = cloudCompute.bootVM(my_token_id, instance_name, this_image.cloudId)
