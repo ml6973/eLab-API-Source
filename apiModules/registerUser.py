@@ -24,7 +24,5 @@ def createNewUserInstances(uname, my_token_id):
             response = cloudCompute.queryVM(my_token_id, compute_id)
         
         ipaddr=response.json()['server']['addresses']['private'][0]['addr']
-        dbFunctions.addInstance(uname, this_image.cloudId, compute_id, ipaddr)
-
-        
+        dbFunctions.addInstance(uname, this_image.cloudId, compute_id, ipaddr, instance_name)
 
