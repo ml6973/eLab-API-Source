@@ -47,6 +47,7 @@ def getVMList(user_id):
     for instance in Instance.select().where(Instance.user == this_user):
         instance_dict[instance.name] = instance.ipaddr    
 
+    print(json.dumps(instance_dict, indent=4))
     return instance_dict
 
 def getCatalog():
@@ -81,8 +82,8 @@ def addInstance(username, imageid, computeid, ipaddr, instance_name):
                             name = instance_name)
     new_instance.save()
 
-
-getCatalog()
+getVMList(1)
+#getCatalog()
 #create_all_tables()
 #user_ryan = User(userName="ryan", authentication="true")
 #user_ryan.save()

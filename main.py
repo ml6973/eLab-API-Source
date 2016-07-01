@@ -15,4 +15,4 @@ my_token_id = cloudAuth.auth()
 #cloudCompute.queryVM(my_token_id, '73fa6abc-a844-41c1-85eb-948b4af3240f')
 #update.updateCatalog(my_token_id)
 
-register.registerUser('ryan', my_token_id)
+register.registerUser('PaulRad', my_token_id)
