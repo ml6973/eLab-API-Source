@@ -1,4 +1,4 @@
-import configuration.globalVars as globalVars
+import api.configuration.globalVars as globalVars
 import requests
 import json
 

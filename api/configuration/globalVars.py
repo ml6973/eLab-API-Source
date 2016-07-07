@@ -18,4 +18,4 @@ def init():
 def getConfig():
    global config
    config = ConfigParser.RawConfigParser()
-   config.read('configuration/config.txt')
+   config.read('api/configuration/config.txt')

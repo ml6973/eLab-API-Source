@@ -1,18 +1,17 @@
-import cloudModules.cloudAuth as cloudAuth
-import cloudModules.cloudCompute as cloudCompute
-import cloudModules.cloudImages as cloudImages
-import configuration.globalVars as globalVars
-import databaseModules.dbFunctions as dbFunctions
-import peewee
+import api.cloudModules.cloudAuth as cloudAuth
+import api.cloudModules.cloudCompute as cloudCompute
+import api.cloudModules.cloudImages as cloudImages
+import api.configuration.globalVars as globalVars
 import time
-from peewee import *
+from api.models import Image, Instance
+import api.models as modelFunctions
 
 def registerUser(uname, my_token_id):
     this_user = dbFunctions.getOrCreateUser(uname)
     createNewUserInstances(uname, my_token_id)
 
 def createNewUserInstances(uname, my_token_id):
-    for this_image in dbFunctions.Image.select():
+    for this_image in Image.objects.all():
         instance_name = uname + '-' + str(this_image.id)
         compute_id = cloudCompute.bootVM(my_token_id, instance_name, this_image.cloudId)
 
@@ -24,5 +23,5 @@ def createNewUserInstances(uname, my_token_id):
             response = cloudCompute.queryVM(my_token_id, compute_id)
         
         ipaddr=response.json()['server']['addresses']['private'][0]['addr']
-        dbFunctions.addInstance(uname, this_image.cloudId, compute_id, ipaddr, instance_name)
+        modelFunctions.addInstance(uname, this_image.cloudId, compute_id, ipaddr, instance_name)
 
