@@ -30,3 +30,13 @@ EXAMPLE RESPONSE:
     	"brandon-13": "10.0.0.42",
     	"brandon-14": "10.0.0.43"
 	}
+
+
+(POST) /rebuildlab/
+Reset lab back to its starting image
+Usage: Send JSON object with 'ipaddress'
+EXAMPLE JSON:
+	{"ipaddress":"10.0.0.1"}
+EXAMPLE POST:
+	curl -X POST http://127.0.0.1:8000/rebuildlab/ -d '{"ipaddress":"10.0.0.40"}' -H "Content-Type: application/json"
+Return: HTTP Code 200

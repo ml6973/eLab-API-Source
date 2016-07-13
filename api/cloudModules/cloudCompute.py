@@ -39,12 +39,12 @@ def queryVM(token_id, server_id):
     print r.json()['server']['addresses']['private'][0]['addr']
     return r
 
-def rebuildVM(token_id, server_id, image_id):
+def rebuildVM(token_id, server_id, image_id, name):
     url = globalVars.computeURL.format(globalVars.tenant_id) + '/' + server_id + '/action'
 
     body = {"rebuild":
                 {"imageRef" : image_id,
-                 "name" : "default"}}
+                 "name" : name}}
 
     my_headers = {"X-Auth-Token": token_id}
     json_body = json.dumps(body)

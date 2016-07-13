@@ -8,7 +8,8 @@ urlpatterns = [
     url(r'^catalog/', views.Catalog.as_view()),
     url(r'^updatecatalog/', views.UpdateCatalog.as_view()),
     url(r'^register/', views.Register.as_view()),
-    url(r'^lablist/', views.LabList.as_view())
+    url(r'^lablist/', views.LabList.as_view()),
+    url(r'^rebuildlab/', views.RebuildLab.as_view())
 ]
 
 #urlpatterns = format_suffix_patterns(urlpatterns)

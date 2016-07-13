@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Image
+from .models import Image, Instance
 from .serializers import ImageSerializer, UserSerializer
 
 class Catalog(APIView):
@@ -53,7 +53,18 @@ class LabList(APIView):
         labs = modelFunctions.get_labs(request.data['userid'])
         return Response(labs)
 
+class RebuildLab(APIView):
+    def get(self, request):
+        pass
 
-
-
+    def post(self, request):
+        this_ip = request.data['ipaddress']
+        globalVars.init()
+        my_token_id = cloudAuth.auth()
+        my_instance = Instance.objects.get(ipaddr=this_ip)
+        response = cloudCompute.rebuildVM(my_token_id, 
+                               my_instance.computeId, 
+                               my_instance.image.cloudId, 
+                               my_instance.name)
+        return Response(response)
 
