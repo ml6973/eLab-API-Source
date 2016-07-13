@@ -10,6 +10,6 @@ def updateCatalog(my_token_id):
     response = cloudImages.getImageList(my_token_id)
     
     for image in response.json()['images']:
-        modelFunctions.getOrCreateImage(image['id'], image['name'], '')
+        modelFunctions.get_or_create_image(image['id'], image['name'], '')
     
     

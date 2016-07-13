@@ -2,8 +2,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
-import json
-import datetime
+
 
 class Image(models.Model):
     description = models.CharField(max_length=1000)
@@ -26,26 +25,40 @@ class Instance(models.Model):
     def __str__(self):
         return self.name
 
-def addInstance(username, imageid, computeid, ipaddr, instance_name):
-    new_instance = Instance(user=User.objects.get(username = username),
-                            image=Image.objects.get(cloudId = imageid),
-                            computeId = computeid,
-                            ipaddr = ipaddr,
-                            name = instance_name)
+
+def add_instance(username, image_id, compute_id, ip_address, instance_name):
+    new_instance = Instance(user=User.objects.get(username=username),
+                            image=Image.objects.get(cloudId=image_id),
+                            computeId=compute_id,
+                            ipaddr=ip_address,
+                            name=instance_name)
     new_instance.save()
 
-def getOrCreateImage(cloudId, name, description):
-    image, created = Image.objects.get_or_create(cloudId = cloudId, name=name, description=description)
+
+def get_or_create_image(cloud_id, name, description):
+    image, created = Image.objects.get_or_create(cloudId=cloud_id, name=name, description=description)
     return image
 
-def addImage(cloudId, name, description):
-    new_image = Image(cloudId = cloudId, name=name, description=description)
+
+def add_image(cloud_id, name, description):
+    new_image = Image(cloudId=cloud_id, name=name, description=description)
     new_image.save()
-    
-def addUser(uname):
-    new_user = User(userName=uname)
+
+
+def add_user(this_username):
+    new_user = User(userName=this_username)
     new_user.save()
 
-def getOrCreateUser(uname):
-    new_user, created = User.objects.get_or_create(userName=uname)
+
+def get_or_create_user(this_username):
+    new_user, created = User.objects.get_or_create(userName=this_username)
     return new_user
+
+def get_labs(user_id):
+    this_user = User.objects.get(id=user_id)
+    instance_dict = {}
+
+    for instance in Instance.objects.filter(user=User.objects.get(id=user_id)):
+        instance_dict[instance.name] = instance.ipaddr + ' - ' + instance.image.description
+
+    return instance_dict

@@ -4,6 +4,7 @@ import cloudModules.cloudImages as cloudImages
 import apiModules.update as update
 import apiModules.registerUser as register
 import configuration.globalVars as globalVars
+import api.models as modelFunctions
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -43,6 +44,14 @@ class Register(APIView):
             register.createNewUserInstances(serializer.data['username'], my_token_id)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class LabList(APIView):
+    def get(self, request):
+        pass
+
+    def post(self, request):
+        labs = modelFunctions.get_labs(request.data['userid'])
+        return Response(labs)
 
 
 
