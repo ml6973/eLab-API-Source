@@ -12,9 +12,9 @@ Return: nothing
 Register a new user, new user gets 1 VM per image (from the catalog) 
 Usage: Send JSON object with 'username' and 'email'
 Example JSON:
-	{"username":"ryan", "email":"ryan@ryan.com"}
+	{"username":"ryan", "email":"ryan@ryan.com", "preferred_pass":"password123"}
 Example POST:
-	curl -X POST http://127.0.0.1:8000/register/ -d '{"username":"ryan", "email":"ryan@ryan.com"}' -H "Content-Type: application/json"
+	curl -X POST http://127.0.0.1:8000/register/ -d '{"username":"ryan", "email":"ryan@ryan.com", "preferred_pass":"password123"}' -H "Content-Type: application/json"
 
 
 (POST) /lablist/

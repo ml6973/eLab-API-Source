@@ -36,14 +36,16 @@ class Register(APIView):
         pass
 
     def post(self, request):
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            globalVars.init()
-            my_token_id = cloudAuth.auth()
-            register.createNewUserInstances(serializer.data['username'], my_token_id)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        #serializer = UserSerializer(data=request.data)
+        #if serializer.is_valid():
+        globalVars.init()
+        my_token_id = cloudAuth.auth()
+        register.registerUser(request.data['username'], 
+                              request.data['email'],
+                              request.data['preferred_pass'],
+                              my_token_id)
+        return Response(status=status.HTTP_201_CREATED)
+        #return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LabList(APIView):
     def get(self, request):

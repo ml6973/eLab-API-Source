@@ -6,9 +6,12 @@ import time
 from api.models import Image, Instance
 import api.models as modelFunctions
 
-def registerUser(uname, my_token_id):
-    this_user = dbFunctions.getOrCreateUser(uname)
-    createNewUserInstances(uname, my_token_id)
+def registerUser(uname, email, preferred_pass, my_token_id):
+    this_user, created = modelFunctions.get_or_create_user(uname, email, preferred_pass)
+    if created is True:
+        createNewUserInstances(uname, my_token_id)
+    else:
+        return False
 
 def createNewUserInstances(uname, my_token_id):
     for this_image in Image.objects.all():
