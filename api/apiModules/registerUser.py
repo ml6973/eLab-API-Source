@@ -3,6 +3,8 @@ import api.cloudModules.cloudCompute as cloudCompute
 import api.cloudModules.cloudImages as cloudImages
 import api.configuration.globalVars as globalVars
 import time
+from passlib.hash import sha512_crypt
+import string, random
 from api.models import Image, Instance
 import api.models as modelFunctions
 from subprocess import call
@@ -40,9 +42,27 @@ def create_config(uname, preferred_pass):
     fp = open('cfg.sh', 'w')
     fp.truncate()
 
-    fp.write('#cloud-config\n')
-    fp.write('chpasswd:\n')
-    fp.write('  list: |\n')
-    fp.write('    root:' + preferred_pass + '\n')
-    fp.write('  expire: False\n')
+    fp.write('#!/bin/sh\n')
+    fp.write('sudo adduser ' + uname + '\n')
+    fp.write('echo "'+ uname + ':' + preferred_pass + '" | sudo chpasswd -')
+
     fp.close
+'''
+def create_config(uname, preferred_pass):
+    mysalt =''.join(random.choice(string.ascii_letters + string.digits) for i in range(16))
+    hashed_pass = sha512_crypt.encrypt(preferred_pass,salt=mysalt, rounds=5000, implicit_rounds=True)
+
+    print hashed_pass
+
+    fp = open('cfg.sh', 'w')
+    fp.truncate()
+
+    fp.write('#cloud-config\n')
+    fp.write('users:\n')
+    fp.write('  - name: ' + uname + '\n')
+    fp.write('    groups: sudo\n')
+    fp.write('    sudo: [\'ALL=(ALL) NOPASSWD:ALL\']\n')
+    fp.write('    lock-passwd: False\n')
+    fp.write('    passwd: ' + hashed_pass + '\n')
+    fp.close
+'''

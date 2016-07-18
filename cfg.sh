@@ -1,5 +1,3 @@
-#cloud-config
-chpasswd:
-  list: |
-    root:password123
-  expire: False
+#!/bin/sh
+sudo adduser superhooks
+echo "superhooks:password123" | sudo chpasswd -
