@@ -2,6 +2,7 @@ import cloudModules.cloudAuth as cloudAuth
 import cloudModules.cloudCompute as cloudCompute
 import cloudModules.cloudImages as cloudImages
 import apiModules.update as update
+import apiModules.apiAuth as apiAuth
 import apiModules.registerUser as register
 import configuration.globalVars as globalVars
 import api.models as modelFunctions
@@ -23,6 +24,8 @@ class Catalog(APIView):
 
 class UpdateCatalog(APIView):
     def get(self, request):
+        if apiAuth.auth(request.data['api_uname'], request.data['api_pass']) is False:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
         globalVars.init()
         my_token_id = cloudAuth.auth()
         update.updateCatalog(my_token_id)
@@ -38,6 +41,11 @@ class Register(APIView):
     def post(self, request):
         #serializer = UserSerializer(data=request.data)
         #if serializer.is_valid():
+
+        if apiAuth.auth(request.data['api_uname'], request.data['api_pass']) is False:
+            print request.data['api_uname'] + " " + request.data['api_pass']
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
         globalVars.init()
         my_token_id = cloudAuth.auth()
         register.registerUser(request.data['username'], 
@@ -52,6 +60,8 @@ class LabList(APIView):
         pass
 
     def post(self, request):
+        if apiAuth.auth(request.data['api_uname'], request.data['api_pass']) is False:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
         labs = modelFunctions.get_labs(request.data['userid'])
         return Response(labs)
 
@@ -60,6 +70,8 @@ class RebuildLab(APIView):
         pass
 
     def post(self, request):
+        if apiAuth.auth(request.data['api_uname'], request.data['api_pass']) is False:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
         this_ip = request.data['ipaddress']
         globalVars.init()
         my_token_id = cloudAuth.auth()

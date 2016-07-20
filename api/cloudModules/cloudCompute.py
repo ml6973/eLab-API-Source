@@ -57,7 +57,9 @@ def rebuildVM(token_id, server_id, image_id, name):
 
     body = {"rebuild":
                 {"imageRef" : image_id,
-                 "name" : name}}
+                 "name" : name
+                }
+            }
 
     my_headers = {"X-Auth-Token": token_id}
     json_body = json.dumps(body)
