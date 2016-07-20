@@ -51,6 +51,7 @@ class Register(APIView):
         register.registerUser(request.data['username'], 
                               request.data['email'],
                               request.data['preferred_pass'],
+                              request.data['external_id'],
                               my_token_id)
         return Response(status=status.HTTP_201_CREATED)
         #return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -9,8 +9,8 @@ from api.models import Image, Instance
 import api.models as modelFunctions
 from subprocess import call
 
-def registerUser(uname, email, preferred_pass, my_token_id):
-    this_user, created = modelFunctions.get_or_create_user(uname, email, preferred_pass)
+def registerUser(uname, email, preferred_pass, external_id, my_token_id):
+    this_user, created = modelFunctions.get_or_create_user(uname, email, preferred_pass, external_id)
     if created is True:
         create_config(uname, preferred_pass)
         call("base64 cfg.sh > cfgb64.sh", shell=True)

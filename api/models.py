@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     preferred_pass = models.CharField(max_length=50)
+    external_id = models.IntegerField(unique=True)
 
     def __str__(self):
         return self.user.username
@@ -56,18 +57,21 @@ def add_user(this_username):
     new_user.save()
 
 
-def get_or_create_user(this_username, this_email, this_preferred_pass):
+def get_or_create_user(this_username, this_email, this_preferred_pass, this_external_id):
     new_user, created = User.objects.get_or_create(username=this_username, email=this_email)
     if created is True:
-        new_user_profile = UserProfile(user=new_user, preferred_pass = this_preferred_pass)
+        new_user_profile = UserProfile(user=new_user, 
+                                        preferred_pass = this_preferred_pass, 
+                                        external_id = this_external_id)
         new_user_profile.save()
     return (new_user, created)
 
 def get_labs(user_id):
-    this_user = User.objects.get(id=user_id)
+    this_user_profile = UserProfile.objects.get(external_id = user_id)
+    this_user = this_user_profile.user
     instance_dict = {}
 
-    for instance in Instance.objects.filter(user=User.objects.get(id=user_id)):
+    for instance in Instance.objects.filter(user=this_user):
         instance_dict[instance.name] = instance.ipaddr + ' - ' + instance.image.description
 
     return instance_dict
