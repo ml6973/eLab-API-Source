@@ -36,6 +36,37 @@ def deleteVM(token_id, server_id):
     r = requests.delete(url, headers=my_headers)
     print r
 
+def get_unused_floating_ip(token_id):
+    url = globalVars.computeURL2.format(globalVars.tenant_id) + '/os-floating-ips'
+
+    my_headers = {"X-Auth-Token": token_id}
+    
+    r = requests.get(url, headers=my_headers)
+    print json.dumps(r.json(), indent=4)
+
+    floating_ip = None
+
+    num_ips = len(r.json()['floating_ips'])
+
+    #loop through all floating IPs and find first unused
+    for x in range(0, num_ips):
+        if r.json()['floating_ips'][x]['instance_id'] is None:
+            floating_ip = r.json()['floating_ips'][x]['ip']
+            break
+
+    return floating_ip
+
+def associate_floating_ip(token_id, server_id, this_floating_ip):
+    url = globalVars.computeURL.format(globalVars.tenant_id) + '/' + server_id + '/action'
+
+    my_headers = {"X-Auth-Token": token_id}
+    body = {"addFloatingIp": 
+                {"address": this_floating_ip}
+            }
+
+    json_body = json.dumps(body)
+    r = requests.post(url, json_body, headers=my_headers)
+
 def queryVM(token_id, server_id):
     url = globalVars.computeURL.format(globalVars.tenant_id) + '/' + server_id
 

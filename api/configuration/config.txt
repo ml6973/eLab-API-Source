@@ -2,3 +2,4 @@
 BaseURL = http://129.114.110.198
 AuthURL = http://129.114.110.198:5000/v2.0/tokens
 ComputeURL = http://129.114.110.198:8774/v2.1/{0}/servers
+ComputeURL2 = http://129.114.110.198:8774/v2.1/{0}

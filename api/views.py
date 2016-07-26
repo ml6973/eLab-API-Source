@@ -66,6 +66,16 @@ class LabList(APIView):
         labs = modelFunctions.get_labs(request.data['userid'])
         return Response(labs)
 
+class FloatingIpList(APIView):
+    def get(self, request):
+        globalVars.init()
+        my_token_id = cloudAuth.auth()
+        response = cloudCompute.get_unused_floating_ip(my_token_id)
+        return Response(response)
+
+    def post(self, request):
+        pass
+
 class RebuildLab(APIView):
     def get(self, request):
         pass
@@ -78,8 +88,8 @@ class RebuildLab(APIView):
         my_token_id = cloudAuth.auth()
         my_instance = Instance.objects.get(ipaddr=this_ip)
         response = cloudCompute.rebuildVM(my_token_id, 
-                               my_instance.computeId, 
-                               my_instance.image.cloudId, 
-                               my_instance.name)
+                                            my_instance.computeId, 
+                                            my_instance.image.cloudId, 
+                                            my_instance.name)
         return Response(response)
 

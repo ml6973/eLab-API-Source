@@ -5,6 +5,7 @@ import api.configuration.globalVars as globalVars
 import time
 from passlib.hash import sha512_crypt
 import string, random
+from django.contrib.auth.models import User
 from api.models import Image, Instance
 import api.models as modelFunctions
 from subprocess import call
@@ -15,6 +16,7 @@ def registerUser(uname, email, preferred_pass, external_id, my_token_id):
         create_config(uname, preferred_pass)
         call("base64 cfg.sh > cfgb64.sh", shell=True)
         createNewUserInstances(uname, my_token_id)
+        assign_floating_ips(uname, my_token_id)
     else:
         return False
 
@@ -37,6 +39,19 @@ def createNewUserInstances(uname, my_token_id):
             ipaddr=response.json()['server']['addresses']['internal'][0]['addr']
         
         modelFunctions.add_instance(uname, this_image.cloudId, compute_id, ipaddr, instance_name)
+
+def assign_floating_ips(uname, my_token_id):
+    for this_instance in Instance.objects.filter(user=User.objects.get(username=uname)):
+        floating_ip = cloudCompute.get_unused_floating_ip(my_token_id)
+        print floating_ip
+
+        if floating_ip is not None:
+            cloudCompute.associate_floating_ip(my_token_id, this_instance.computeId, floating_ip)
+            this_instance.ipaddr = floating_ip
+            this_instance.save()
+        else:
+            print "All Floating IPs are in use. Please add more to the pool."
+            break
 
 def create_config(uname, preferred_pass):
     fp = open('cfg.sh', 'w')
