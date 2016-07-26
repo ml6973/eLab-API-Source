@@ -72,6 +72,6 @@ def get_labs(user_id):
     instance_dict = {}
 
     for instance in Instance.objects.filter(user=this_user):
-        instance_dict[instance.name] = instance.ipaddr + ' - ' + instance.image.description
+        instance_dict[instance.image.name] = instance.ipaddr + ' - ' + instance.image.description
 
     return instance_dict
