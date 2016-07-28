@@ -1,5 +1,9 @@
 [GlobalInformation]
-BaseURL = http://129.114.110.198
-AuthURL = http://129.114.110.198:5000/v2.0/tokens
-ComputeURL = http://129.114.110.198:8774/v2.1/{0}/servers
-ComputeURL2 = http://129.114.110.198:8774/v2.1/{0}
+BaseURL = https://openstack.tacc.chameleoncloud.org
+AuthURL = https://openstack.tacc.chameleoncloud.org:5000/v2.0/tokens
+ComputeURL = https://openstack.tacc.chameleoncloud.org:8774/v2.1/{0}/servers
+ComputeURL2 = https://openstack.tacc.chameleoncloud.org:8774/v2.1/{0}
+tenantName = CH-816752
+networkID = e5fdf36e-7e55-42fe-aa1b-dd319cb62a1e
+cloudUsername = elabapi
+cloudPassword = Password123

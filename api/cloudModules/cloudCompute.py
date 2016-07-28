@@ -14,13 +14,13 @@ def bootVM(token_id, name, imageid):
     body = {"server": 
                 {"name": name,
                  "imageRef": imageid,
-                 "flavorRef": "1",
-                 "networks":[{"uuid":"ed850e35-090c-4a5a-bea9-8b83dce481f7"}],
+                 "flavorRef": "2",
+                 "networks":[{"uuid":globalVars.networkID}],
                  "user_data":config_b64
                  }
             }
 
-    my_headers = {"X-Auth-Token": token_id}
+    my_headers = {"Content-Type": 'application/json', "X-Auth-Token": token_id}
 
     json_body = json.dumps(body)
 
@@ -31,7 +31,7 @@ def bootVM(token_id, name, imageid):
 def deleteVM(token_id, server_id):
     url = globalVars.computeURL.format(globalVars.tenant_id) + '/' + server_id
 
-    my_headers = {"X-Auth-Token": token_id}
+    my_headers = {"Content-Type": 'application/json',"X-Auth-Token": token_id}
 
     r = requests.delete(url, headers=my_headers)
     print r
@@ -39,7 +39,7 @@ def deleteVM(token_id, server_id):
 def get_unused_floating_ip(token_id):
     url = globalVars.computeURL2.format(globalVars.tenant_id) + '/os-floating-ips'
 
-    my_headers = {"X-Auth-Token": token_id}
+    my_headers = {"Content-Type": 'application/json',"X-Auth-Token": token_id}
     
     r = requests.get(url, headers=my_headers)
     print json.dumps(r.json(), indent=4)
@@ -59,7 +59,7 @@ def get_unused_floating_ip(token_id):
 def associate_floating_ip(token_id, server_id, this_floating_ip):
     url = globalVars.computeURL.format(globalVars.tenant_id) + '/' + server_id + '/action'
 
-    my_headers = {"X-Auth-Token": token_id}
+    my_headers = {"Content-Type": 'application/json',"X-Auth-Token": token_id}
     body = {"addFloatingIp": 
                 {"address": this_floating_ip}
             }
@@ -70,16 +70,18 @@ def associate_floating_ip(token_id, server_id, this_floating_ip):
 def queryVM(token_id, server_id):
     url = globalVars.computeURL.format(globalVars.tenant_id) + '/' + server_id
 
-    my_headers = {"X-Auth-Token": token_id}
+    my_headers = {"Content-Type": 'application/json',"X-Auth-Token": token_id}
 
     r = requests.get(url, headers=my_headers)
     
     print json.dumps(r.json(), indent=4)
 
+    '''
     if(r.json()['server']['addresses']['internal'][0]['version'] == 6):
         print r.json()['server']['addresses']['internal'][1]['addr']
     else:
         print r.json()['server']['addresses']['internal'][0]['addr']
+    '''
 
     return r
 
@@ -92,7 +94,7 @@ def rebuildVM(token_id, server_id, image_id, name):
                 }
             }
 
-    my_headers = {"X-Auth-Token": token_id}
+    my_headers = {"Content-Type": 'application/json',"X-Auth-Token": token_id}
     json_body = json.dumps(body)
 
     r = requests.post(url, json_body, headers=my_headers)

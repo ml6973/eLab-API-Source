@@ -24,8 +24,6 @@ class Catalog(APIView):
 
 class UpdateCatalog(APIView):
     def get(self, request):
-        if apiAuth.auth(request.data['api_uname'], request.data['api_pass']) is False:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
         globalVars.init()
         my_token_id = cloudAuth.auth()
         update.updateCatalog(my_token_id)
@@ -65,7 +63,7 @@ class LabList(APIView):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         labs = modelFunctions.get_labs(request.data['userid'])
         return Response(labs)
-
+'''
 class FloatingIpList(APIView):
     def get(self, request):
         globalVars.init()
@@ -75,7 +73,7 @@ class FloatingIpList(APIView):
 
     def post(self, request):
         pass
-
+'''
 class RebuildLab(APIView):
     def get(self, request):
         pass

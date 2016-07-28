@@ -10,7 +10,7 @@ urlpatterns = [
     url(r'^register/', views.Register.as_view()),
     url(r'^lablist/', views.LabList.as_view()),
     url(r'^rebuildlab/', views.RebuildLab.as_view()),
-    url(r'^getips/', views.FloatingIpList.as_view())
+    #url(r'^getips/', views.FloatingIpList.as_view())
 ]
 
 #urlpatterns = format_suffix_patterns(urlpatterns)

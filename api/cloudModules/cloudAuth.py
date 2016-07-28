@@ -7,14 +7,16 @@ def auth():
     url = globalVars.authURL
     
     body = {"auth" : 
-               {"tenantName": "admin",
+               {"tenantName": globalVars.tenantName,
                 "passwordCredentials": 
-                   {"username": "admin",
-                    "password": "secrete"}}}
-                        
+                   {"username": globalVars.cloudUsername,
+                    "password": globalVars.cloudPassword}}}
+    
+    my_headers = {"Content-Type": 'application/json'}
+
     json_body = json.dumps(body)
 
-    r = requests.post(url, json_body)
+    r = requests.post(url, json_body, headers=my_headers)
     #print json.dumps(body, indent=4)
     #print json.dumps(r.json(), indent=4)
     globalVars.tenant_id = r.json()['access']['token']['tenant']['id']

@@ -22,7 +22,7 @@ def registerUser(uname, email, preferred_pass, external_id, my_token_id):
 
 def createNewUserInstances(uname, my_token_id):
     for this_image in Image.objects.all():
-        instance_name = uname + '-' + str(this_image.id)
+        instance_name = uname + '-' + str(this_image.name)
         compute_id = cloudCompute.bootVM(my_token_id, instance_name, this_image.cloudId)
 
         time.sleep(5)
@@ -32,11 +32,8 @@ def createNewUserInstances(uname, my_token_id):
             time.sleep(5)
             response = cloudCompute.queryVM(my_token_id, compute_id)
         
-        #make sure we are capturing the ipv4 ip address
-        if(response.json()['server']['addresses']['internal'][0]['version'] == 6):
-            ipaddr=response.json()['server']['addresses']['internal'][1]['addr']
-        else:
-            ipaddr=response.json()['server']['addresses']['internal'][0]['addr']
+        #ip address set to 0.0.0.0 before floating ip is assigned
+        ipaddr = '0.0.0.0'
         
         modelFunctions.add_instance(uname, this_image.cloudId, compute_id, ipaddr, instance_name)
 

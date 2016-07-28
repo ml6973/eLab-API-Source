@@ -14,7 +14,7 @@ class UserProfile(models.Model):
 class Image(models.Model):
     description = models.CharField(max_length=1000)
     name = models.CharField(unique=True, max_length=50)
-    cloudId = models.CharField(unique=True, max_length=50)
+    cloudId = models.CharField(unique=True, primary_key=True, max_length=50)
     dateCreated = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
