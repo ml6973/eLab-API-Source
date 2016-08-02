@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from api.models import Image, Instance
 import api.models as modelFunctions
 from subprocess import call
+from rest_framework import status
 
 def registerUser(uname, email, preferred_pass, external_id, my_token_id):
     this_user, created = modelFunctions.get_or_create_user(uname, email, preferred_pass, external_id)
@@ -16,9 +17,16 @@ def registerUser(uname, email, preferred_pass, external_id, my_token_id):
         create_config(uname, preferred_pass)
         call("base64 cfg.sh > cfgb64.sh", shell=True)
         createNewUserInstances(uname, my_token_id)
-        assign_floating_ips(uname, my_token_id)
+        enough_floating_ips = assign_floating_ips(uname, my_token_id)
+
+        if enough_floating_ips == False:
+            delete_user(uname, my_token_id)
+            return status.HTTP_503_SERVICE_UNAVAILABLE
+
+        return status.HTTP_201_CREATED
     else:
-        return False
+        delete_user(uname, my_token_id)
+        return status.HTTP_500_INTERNAL_SERVER_ERROR
 
 def createNewUserInstances(uname, my_token_id):
     for this_image in Image.objects.all():
@@ -37,6 +45,16 @@ def createNewUserInstances(uname, my_token_id):
         
         modelFunctions.add_instance(uname, this_image.cloudId, compute_id, ipaddr, instance_name)
 
+def delete_user(uname, my_token_id):
+    #first delete all labs for this user on the cloud
+    for this_instance in Instance.objects.filter(user=User.objects.get(username=uname)):
+        cloudCompute.deleteVM(my_token_id, this_instance.computeId)
+
+    #delete user from database, will also delete all info owned by this user in database
+    this_user = User.objects.get(username=uname)
+    this_user.delete()
+
+
 def assign_floating_ips(uname, my_token_id):
     for this_instance in Instance.objects.filter(user=User.objects.get(username=uname)):
         floating_ip = cloudCompute.get_unused_floating_ip(my_token_id)
@@ -48,7 +66,9 @@ def assign_floating_ips(uname, my_token_id):
             this_instance.save()
         else:
             print "All Floating IPs are in use. Please add more to the pool."
-            break
+            return False
+
+    return True
 
 def create_config(uname, preferred_pass):
     fp = open('cfg.sh', 'w')

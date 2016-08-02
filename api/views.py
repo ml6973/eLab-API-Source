@@ -37,21 +37,18 @@ class Register(APIView):
         pass
 
     def post(self, request):
-        #serializer = UserSerializer(data=request.data)
-        #if serializer.is_valid():
-
         if apiAuth.auth(request.data['api_uname'], request.data['api_pass']) is False:
             print request.data['api_uname'] + " " + request.data['api_pass']
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         globalVars.init()
         my_token_id = cloudAuth.auth()
-        register.registerUser(request.data['username'], 
+        status_response = register.registerUser(request.data['username'], 
                               request.data['email'],
                               request.data['preferred_pass'],
                               request.data['external_id'],
                               my_token_id)
-        return Response(status=status.HTTP_201_CREATED)
+        return Response(status=status_response)
         #return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LabList(APIView):
@@ -63,17 +60,7 @@ class LabList(APIView):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         labs = modelFunctions.get_labs(request.data['userid'])
         return Response(labs)
-'''
-class FloatingIpList(APIView):
-    def get(self, request):
-        globalVars.init()
-        my_token_id = cloudAuth.auth()
-        response = cloudCompute.get_unused_floating_ip(my_token_id)
-        return Response(response)
 
-    def post(self, request):
-        pass
-'''
 class RebuildLab(APIView):
     def get(self, request):
         pass
@@ -90,4 +77,16 @@ class RebuildLab(APIView):
                                             my_instance.image.cloudId, 
                                             my_instance.name)
         return Response(response)
+
+'''
+class FloatingIpList(APIView):
+    def get(self, request):
+        globalVars.init()
+        my_token_id = cloudAuth.auth()
+        response = cloudCompute.get_unused_floating_ip(my_token_id)
+        return Response(response)
+
+    def post(self, request):
+        pass
+'''
 
