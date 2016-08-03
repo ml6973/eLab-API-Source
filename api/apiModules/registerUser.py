@@ -23,10 +23,11 @@ def registerUser(uname, email, preferred_pass, external_id, my_token_id):
             delete_user(uname, my_token_id)
             return status.HTTP_503_SERVICE_UNAVAILABLE
 
-        return status.HTTP_201_CREATED
     else:
         delete_user(uname, my_token_id)
         return status.HTTP_500_INTERNAL_SERVER_ERROR
+
+    return status.HTTP_201_CREATED
 
 def createNewUserInstances(uname, my_token_id):
     for this_image in Image.objects.all():
@@ -76,7 +77,8 @@ def create_config(uname, preferred_pass):
 
     fp.write('#!/bin/sh\n')
     fp.write('sudo adduser ' + uname + '\n')
-    fp.write('echo "'+ uname + ':' + preferred_pass + '" | sudo chpasswd -')
+    fp.write('echo "'+ uname + ':' + preferred_pass + '" | sudo chpasswd -\n')
+    fp.write('echo "' + uname + '  ALL=(ALL:ALL) ALL" >> /etc/sudoers')
 
     fp.close
 '''
