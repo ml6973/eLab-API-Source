@@ -76,11 +76,17 @@ def create_config(uname, preferred_pass):
     fp.truncate()
 
     fp.write('#!/bin/sh\n')
+<<<<<<< HEAD
     fp.write('sudo useradd ' + uname + '\n')
     fp.write('echo "'+ uname + ':' + preferred_pass + '" | sudo chpasswd -\n')
     fp.write('echo "' + uname + '  ALL=(ALL:ALL) ALL" >> /etc/sudoers\n')   
     fp.write('sudo sed -i \'s|[#]*PasswordAuthentication no|PasswordAuthentication yes|g\' /etc/ssh/sshd_config\n')
     fp.write('sudo service ssh restart')
+=======
+    fp.write('sudo adduser ' + uname + '\n')
+    fp.write('echo "'+ uname + ':' + preferred_pass + '" | sudo chpasswd -\n')
+    fp.write('echo "' + uname + '  ALL=(ALL:ALL) ALL" >> /etc/sudoers')
+>>>>>>> 7a297f0a242c839739b7db7c202fdf65950281b0
 
     fp.close
 '''
