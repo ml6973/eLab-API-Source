@@ -14,7 +14,7 @@ def bootVM(token_id, name, imageid):
     body = {"server": 
                 {"name": name,
                  "imageRef": imageid,
-                 "flavorRef": "2",
+                 "flavorRef": "5",
                  "networks":[{"uuid":globalVars.networkID}],
                  "user_data":config_b64
                  }

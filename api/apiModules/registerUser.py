@@ -23,10 +23,11 @@ def registerUser(uname, email, preferred_pass, external_id, my_token_id):
             delete_user(uname, my_token_id)
             return status.HTTP_503_SERVICE_UNAVAILABLE
 
-        return status.HTTP_201_CREATED
     else:
         delete_user(uname, my_token_id)
         return status.HTTP_500_INTERNAL_SERVER_ERROR
+
+    return status.HTTP_201_CREATED
 
 def createNewUserInstances(uname, my_token_id):
     for this_image in Image.objects.all():
@@ -69,14 +70,17 @@ def assign_floating_ips(uname, my_token_id):
             return False
 
     return True
-
+'''
 def create_config(uname, preferred_pass):
     fp = open('cfg.sh', 'w')
     fp.truncate()
 
     fp.write('#!/bin/sh\n')
-    fp.write('sudo adduser ' + uname + '\n')
-    fp.write('echo "'+ uname + ':' + preferred_pass + '" | sudo chpasswd -')
+    fp.write('sudo useradd ' + uname + '\n')
+    fp.write('echo "'+ uname + ':' + preferred_pass + '" | sudo chpasswd -\n')
+    fp.write('echo "' + uname + '  ALL=(ALL:ALL) ALL" >> /etc/sudoers\n')   
+    fp.write('sudo sed -i \'s|[#]*PasswordAuthentication no|PasswordAuthentication yes|g\' /etc/ssh/sshd_config\n')
+    fp.write('sudo service ssh restart')
 
     fp.close
 '''
@@ -92,9 +96,15 @@ def create_config(uname, preferred_pass):
     fp.write('#cloud-config\n')
     fp.write('users:\n')
     fp.write('  - name: ' + uname + '\n')
+    fp.write('    ssh-authorized-keys:\n')
+    fp.write('      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDNWdWGtuH05mk1tzQjNnAugK0SrDxkE4eXPiOaf6OY8d5mdv+awNPL5TbtE/eyA4L657w+et54+2wCLEUXaKddoPC5w847RA3zaKw7AS2KqlwWtcLd7GykVeiJck/K3sgJfYu1sJCQY9v0rdviz78KF8nARakLNz+5Q0hcWeFuIOUBoGvDsaiLysSD5aurcc3iLWUMub6tkd0v/pRoNhJ2K3VZFlTat6EUodYJk+5WuEdAjj5t/8jNGOJzrerVPNAbv4cJYT3+EoR+rL5cWHBF77ePYZSlFTfAtfpKn2FIF3d6PgU5JzoUzo8T24HxFGPdd/VFMNvIuw/wnVm6Urhd ryan@Ryans-MacBook-Pro.local\n')
     fp.write('    groups: sudo\n')
+    fp.write('    shell: /bin/bash\n')
     fp.write('    sudo: [\'ALL=(ALL) NOPASSWD:ALL\']\n')
     fp.write('    lock-passwd: False\n')
     fp.write('    passwd: ' + hashed_pass + '\n')
+    fp.write('runcmd:\n')
+    fp.write('  - [ sed, -i, \'s/[#]*PasswordAuthentication no/PasswordAuthentication yes/g\', /etc/ssh/sshd_config]\n')
+    fp.write('  - service ssh restart')
     fp.close
-'''
+
