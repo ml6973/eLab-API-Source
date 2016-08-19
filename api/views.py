@@ -78,6 +78,20 @@ class RebuildLab(APIView):
                                             my_instance.name)
         return Response(response)
 
+class Enroll(APIView):
+    def get(self, request):
+        pass
+
+    def post(self, request):
+        if apiAuth.auth(request.data['api_uname'], request.data['api_pass']) is False:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        globalVars.init()
+        my_token_id = cloudAuth.auth()
+        response = register.enroll_user(request.data['external_id'], 
+                                            request.data['image_id'], my_token_id)
+        return Response(response)
+
 '''
 class FloatingIpList(APIView):
     def get(self, request):

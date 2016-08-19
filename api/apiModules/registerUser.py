@@ -6,14 +6,17 @@ import time
 from passlib.hash import sha512_crypt
 import string, random
 from django.contrib.auth.models import User
-from api.models import Image, Instance
+from api.models import Image, Instance, UserProfile
 import api.models as modelFunctions
 from subprocess import call
 from rest_framework import status
 
 def registerUser(uname, email, preferred_pass, external_id, my_token_id):
     this_user, created = modelFunctions.get_or_create_user(uname, email, preferred_pass, external_id)
+    
+
     if created is True:
+        '''
         create_config(uname, preferred_pass)
         call("base64 cfg.sh > cfgb64.sh", shell=True)
         createNewUserInstances(uname, my_token_id)
@@ -22,9 +25,51 @@ def registerUser(uname, email, preferred_pass, external_id, my_token_id):
         if enough_floating_ips == False:
             delete_user(uname, my_token_id)
             return status.HTTP_503_SERVICE_UNAVAILABLE
-
+        '''
     else:
         delete_user(uname, my_token_id)
+        return status.HTTP_500_INTERNAL_SERVER_ERROR
+
+    return status.HTTP_201_CREATED
+
+def enroll_user(user_id, image_id, my_token_id):
+    this_user_profile = UserProfile.objects.get(external_id = user_id)
+    this_user = this_user_profile.user
+
+    uname = this_user.username
+    preferred_pass = this_user_profile.preferred_pass
+
+    create_config(uname, preferred_pass)
+    call("base64 cfg.sh > cfgb64.sh", shell=True)
+
+    this_image = Image.objects.get(cloudId=image_id)
+
+    instance_name = uname + '-' + str(this_image.name)
+    this_compute_id = cloudCompute.bootVM(my_token_id, instance_name, this_image.cloudId)
+
+    time.sleep(5)
+    response = cloudCompute.queryVM(my_token_id, this_compute_id)
+
+    while(response.json()['server']['OS-EXT-STS:task_state'] != None):
+        time.sleep(5)
+        response = cloudCompute.queryVM(my_token_id, this_compute_id)
+    
+    #ip address set to 0.0.0.0 before floating ip is assigned
+    ipaddr = '0.0.0.0'
+    
+    modelFunctions.add_instance(uname, this_image.cloudId, this_compute_id, ipaddr, instance_name)
+
+    this_instance = Instance.objects.get(computeId = this_compute_id)
+
+    floating_ip = cloudCompute.get_unused_floating_ip(my_token_id)
+    print floating_ip
+
+    if floating_ip is not None:
+        cloudCompute.associate_floating_ip(my_token_id, this_compute_id, floating_ip)
+        this_instance.ipaddr = floating_ip
+        this_instance.save()
+    else:
+        print "All Floating IPs are in use. Please add more to the pool."
         return status.HTTP_500_INTERNAL_SERVER_ERROR
 
     return status.HTTP_201_CREATED
@@ -76,17 +121,12 @@ def create_config(uname, preferred_pass):
     fp.truncate()
 
     fp.write('#!/bin/sh\n')
-<<<<<<< HEAD
     fp.write('sudo useradd ' + uname + '\n')
     fp.write('echo "'+ uname + ':' + preferred_pass + '" | sudo chpasswd -\n')
     fp.write('echo "' + uname + '  ALL=(ALL:ALL) ALL" >> /etc/sudoers\n')   
     fp.write('sudo sed -i \'s|[#]*PasswordAuthentication no|PasswordAuthentication yes|g\' /etc/ssh/sshd_config\n')
     fp.write('sudo service ssh restart')
-=======
-    fp.write('sudo adduser ' + uname + '\n')
-    fp.write('echo "'+ uname + ':' + preferred_pass + '" | sudo chpasswd -\n')
-    fp.write('echo "' + uname + '  ALL=(ALL:ALL) ALL" >> /etc/sudoers')
->>>>>>> 7a297f0a242c839739b7db7c202fdf65950281b0
+
 
     fp.close
 '''
@@ -110,7 +150,8 @@ def create_config(uname, preferred_pass):
     fp.write('    lock-passwd: False\n')
     fp.write('    passwd: ' + hashed_pass + '\n')
     fp.write('runcmd:\n')
-    fp.write('  - [ sed, -i, \'s/[#]*PasswordAuthentication no/PasswordAuthentication yes/g\', /etc/ssh/sshd_config]\n')
-    fp.write('  - service ssh restart')
+    fp.write('  - touch /home/ryan/testfile.txt\n')
+    fp.write('  - [ sudo, sed, -i, \'s/[#]*PasswordAuthentication no/PasswordAuthentication yes/g\', /etc/ssh/sshd_config ]\n')
+    fp.write('  - sudo service ssh restart\n')
     fp.close
 
