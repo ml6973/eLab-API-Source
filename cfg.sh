@@ -7,7 +7,7 @@ users:
     shell: /bin/bash
     sudo: ['ALL=(ALL) NOPASSWD:ALL']
     lock-passwd: False
-    passwd: $6$ePEf6hdM9nnropXl$Jr0.hoYZPOd4dlvI4CYYieNSJjNFHP0pjKjpWyCh5jdTE7UN1lcqgMdnyEfz33WdW5iMwdQwvxccNFJ0yUo8O/
+    passwd: $6$GGF7hdoJb3hIRD4H$H/y6pC57Zr2uLmxQqJJbg9MwZGOhSmMDAjvmBjnzw87XIgbIGPmtv8yK3z/M.k5MgFmha.pF9T0N1HSRUEneR/
 runcmd:
   - touch /home/ryan/testfile.txt
   - [ sudo, sed, -i, 's/[#]*PasswordAuthentication no/PasswordAuthentication yes/g', /etc/ssh/sshd_config ]

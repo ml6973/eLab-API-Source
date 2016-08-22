@@ -49,3 +49,16 @@ EXAMPLE JSON:
 EXAMPLE POST:
 	curl -X POST http://127.0.0.1:8000/rebuildlab/ -d '{"ipaddress":"10.0.0.40"}' -H "Content-Type: application/json"
 Return: HTTP Code 200
+
+(POST) /enroll/
+Enroll a user into a class. Builds a lab environment (Virtual Machine) based on the image id. Image id's uniquely identify classes.
+Usage: Send JSON object with 'external_id' and 'image_id'
+EXAMPLE JSON:
+	{
+		"api_uname":"webportal", 
+		"api_pass":"greg123",
+		"external_id":"3",
+		"image_id":"8d26713b-605f-4a63-83cc-ff9b92b7b31b"
+	}
+EXAMPLE POST:
+	curl -X POST http://127.0.0.1:8000/enroll/ -d '{"api_uname":"webportal", "api_pass":"greg123","external_id":"5","image_id":"8d26713b-605f-4a63-83cc-ff9b92b7b31b"}' -H "Content-Type: application/json"
