@@ -4,7 +4,7 @@ import api.configuration.globalVars as globalVars
 
 
 # Boot a virtual machine (lab environment) and return compute id
-def bootVM(token_id, name, imageid):
+def boot_vm(token_id, name, imageid):
     # Replaces {0} from config file with the appropriate tenant id
     url2 = globalVars.computeURL.format(globalVars.tenant_id)
 
@@ -18,7 +18,7 @@ def bootVM(token_id, name, imageid):
             "server": {
                 "name": name,
                 "imageRef": imageid,
-                "flavorRef": "5",
+                "flavorRef": "4",
                 "networks": [{"uuid": globalVars.networkID}],
                 "user_data": config_b64
                 }
@@ -34,7 +34,7 @@ def bootVM(token_id, name, imageid):
 
 
 # Delete VM from cloud
-def deleteVM(token_id, server_id):
+def delete_vm(token_id, server_id):
     url = globalVars.computeURL.format(globalVars.tenant_id) + '/' + server_id
 
     my_headers = {"Content-Type": 'application/json', "X-Auth-Token": token_id}
@@ -83,7 +83,7 @@ def associate_floating_ip(token_id, server_id, this_floating_ip):
 
 
 # Query cloud for various VM info, print to console
-def queryVM(token_id, server_id):
+def query_vm(token_id, server_id):
     url = globalVars.computeURL.format(globalVars.tenant_id) + '/' + server_id
 
     my_headers = {"Content-Type": 'application/json', "X-Auth-Token": token_id}
@@ -95,7 +95,7 @@ def queryVM(token_id, server_id):
 
 
 # Reset VM to base image
-def rebuildVM(token_id, server_id, image_id, name):
+def rebuild_vm(token_id, server_id, image_id, name):
     url = (globalVars.computeURL.format(globalVars.tenant_id) + '/' +
            server_id + '/action')
 
