@@ -1,6 +1,8 @@
 import time
 import string
 import random
+import getpass
+import hashlib
 
 from passlib.hash import sha512_crypt
 from django.contrib.auth.models import User
@@ -55,17 +57,17 @@ def enroll_user(user_id, image_id, my_token_id):
     instance_name = uname + '-' + str(this_image.name)
 
     # create lab environment, save compute id(unique) of this instance
-    this_compute_id = cloudCompute.bootVM(my_token_id, instance_name,
+    this_compute_id = cloudCompute.boot_vm(my_token_id, instance_name,
                                           this_image.cloudId)
 
     # continually sleeps until cloud has fully populated the response with
     # the data we need
     time.sleep(5)
-    response = cloudCompute.queryVM(my_token_id, this_compute_id)
+    response = cloudCompute.query_vm(my_token_id, this_compute_id)
 
     while(response.json()['server']['OS-EXT-STS:task_state'] != None):
         time.sleep(5)
-        response = cloudCompute.queryVM(my_token_id, this_compute_id)
+        response = cloudCompute.query_vm(my_token_id, this_compute_id)
 
     # ip address set to 0.0.0.0 before floating ip is assigned
     ipaddr = '0.0.0.0'
@@ -95,15 +97,15 @@ def enroll_user(user_id, image_id, my_token_id):
 def create_new_user_instances(uname, my_token_id):
     for this_image in Image.objects.all():
         instance_name = uname + '-' + str(this_image.name)
-        compute_id = cloudCompute.bootVM(my_token_id, instance_name,
+        compute_id = cloudCompute.boot_vm(my_token_id, instance_name,
                                          this_image.cloudId)
 
         time.sleep(5)
-        response = cloudCompute.queryVM(my_token_id, compute_id)
+        response = cloudCompute.query_vm(my_token_id, compute_id)
 
         while(response.json()['server']['OS-EXT-STS:task_state'] != None):
             time.sleep(5)
-            response = cloudCompute.queryVM(my_token_id, compute_id)
+            response = cloudCompute.query_vm(my_token_id, compute_id)
 
         # ip address set to 0.0.0.0 before floating ip is assigned
         ipaddr = '0.0.0.0'
@@ -116,7 +118,7 @@ def delete_user(uname, my_token_id):
     # first delete all labs for this user on the cloud
     for this_instance in Instance.objects.filter(
             user=User.objects.get(username=uname)):
-        cloudCompute.deleteVM(my_token_id, this_instance.computeId)
+        cloudCompute.delete_vm(my_token_id, this_instance.computeId)
 
     # delete user from database, will also delete all info owned by this
     # user in database
@@ -165,6 +167,14 @@ def create_config(uname, preferred_pass):
     hashed_pass = sha512_crypt.encrypt(preferred_pass, salt=mysalt,
                                        rounds=5000, implicit_rounds=True)
 
+    # code to create password for jupyter notebook
+    salt_len = 12
+    algorithm = 'sha1'
+    h = hashlib.new(algorithm)
+    salt = ('%0' + str(salt_len) + 'x') % random.getrandbits(4 * salt_len)
+    h.update(preferred_pass + salt)
+    jupyter_pass = ':'.join((algorithm, salt, h.hexdigest()))
+
     print hashed_pass
 
     fp = open('cfg.sh', 'w')
@@ -184,5 +194,10 @@ def create_config(uname, preferred_pass):
     fp.write('  - touch /home/ryan/testfile.txt\n')
     fp.write('  - [ sudo, sed, -i, \'s/[#]*PasswordAuthentication no/'
              'PasswordAuthentication yes/g\', /etc/ssh/sshd_config ]\n')
+    fp.write('  - sudo cp -r /home/cc/ /home/' + uname + '\n')
     fp.write('  - sudo service ssh restart\n')
+    fp.write('  - [ sudo, sed, -i, \"s/c\.NotebookApp\.password.*/c\.Notebook'
+             'App\.password = u\\\'' + jupyter_pass + '\\\'/g" /home/' + uname
+              + '/.jupyter/jupyter_notebook_config.py\n')
+    fp.write('  - sudo jupyter notebook')
     fp.close

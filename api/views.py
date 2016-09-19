@@ -106,7 +106,7 @@ class Enroll(APIView):
         response = register.enroll_user(request.data['external_id'],
                                         request.data['image_id'],
                                         my_token_id)
-        return Response(response)
+        return Response(request.data, response)
 
 '''
 class FloatingIpList(APIView):
