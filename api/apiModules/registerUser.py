@@ -194,13 +194,11 @@ def create_config(uname, preferred_pass):
     fp.write('  - touch /home/ryan/testfile.txt\n')
     fp.write('  - [ sudo, sed, -i, \'s/[#]*PasswordAuthentication no/'
              'PasswordAuthentication yes/g\', /etc/ssh/sshd_config ]\n')
-    fp.write('  - mv /home/' + uname + '/.ssh /home/' + uname + '/.ssh_temp\n')
-    fp.write('  - sudo cp -r /home/cc/ /home/' + uname + '\n')
-    fp.write('  - rm /home/' + uname + '/.ssh\n')
-    fp.write('  - mv /home/' + uname + '/.ssh_temp /home/' + uname + '/.ssh')
+    fp.write('  - sudo mv /home/' + uname + '/.ssh /home/' + uname + '/.ssh_temp\n')
+    fp.write('  - sudo cp -r /home/cc/. /home/' + uname + '\n')
+    fp.write('  - sudo rm -r /home/' + uname + '/.ssh\n')
+    fp.write('  - sudo mv /home/' + uname + '/.ssh_temp /home/' + uname + '/.ssh\n')
     fp.write('  - sudo service ssh restart\n')
-    fp.write('  - [ sudo, sed, -i, \"s/c\.NotebookApp\.password.*/c\.Notebook'
-             'App\.password = u\\\'' + jupyter_pass + '\\\'/g" /home/' + uname
-              + '/.jupyter/jupyter_notebook_config.py\n')
-    fp.write('  - sudo jupyter notebook')
+    fp.write('  - sudo sed -i "s/c\.NotebookApp\.password.*/c\.NotebookApp\.password = u\\\'' + jupyter_pass + '\\\'/g" /home/' + uname + '/.jupyter/jupyter_notebook_config.py\n')
+    fp.write('  - sudo su - ' + uname + ' -c "jupyter notebook &"\n')
     fp.close

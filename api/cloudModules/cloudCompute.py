@@ -18,7 +18,7 @@ def boot_vm(token_id, name, imageid):
             "server": {
                 "name": name,
                 "imageRef": imageid,
-                "flavorRef": "4",
+                "flavorRef": "3",
                 "networks": [{"uuid": globalVars.networkID}],
                 "user_data": config_b64
                 }
