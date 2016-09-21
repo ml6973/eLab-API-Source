@@ -200,5 +200,5 @@ def create_config(uname, preferred_pass):
     fp.write('  - sudo mv /home/' + uname + '/.ssh_temp /home/' + uname + '/.ssh\n')
     fp.write('  - sudo service ssh restart\n')
     fp.write('  - sudo sed -i "s/c\.NotebookApp\.password.*/c\.NotebookApp\.password = u\\\'' + jupyter_pass + '\\\'/g" /home/' + uname + '/.jupyter/jupyter_notebook_config.py\n')
-    fp.write('  - sudo su - ' + uname + ' -c "jupyter notebook &"\n')
+    fp.write('  - sudo su - ' + uname + ' -c "sudo jupyter notebook &"\n')
     fp.close
