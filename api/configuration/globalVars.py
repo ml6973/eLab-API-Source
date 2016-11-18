@@ -34,6 +34,30 @@ def init():
     global masterKey
     masterKey = config.get('GlobalInformation', 'masterKey')
 
+    global apiUser
+    try:
+        apiUser = config.get('GlobalInformation', 'apiUser')
+    except ConfigParser.NoOptionError:
+        pass
+
+    global apiPass
+    try:
+        apiPass = config.get('GlobalInformation', 'apiPass')
+    except ConfigParser.NoOptionError:
+         pass
+
+    global awsAccess
+    try:
+         awsAccess = config.get('GlobalInformation', 'awsAccess')
+    except ConfigParser.NoOptionError:
+         pass
+
+    global awsSecret
+    try:
+         awsSecret = config.get('GlobalInformation', 'awsSecret')
+    except ConfigParser.NoOptionError:
+         pass
+
 
 def get_config():
     global config

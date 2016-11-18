@@ -1,11 +1,11 @@
 import cloudModules.cloudAuth as cloudAuth
 import cloudModules.cloudCompute as cloudCompute
 import cloudModules.cloudImages as cloudImages
-import apiModules.update as update
 import apiModules.apiAuth as apiAuth
 import apiModules.registerUser as register
 import configuration.globalVars as globalVars
 import api.models as modelFunctions
+import apiModules.cloudAdapter as cloudAdapter
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -28,9 +28,7 @@ class Catalog(APIView):
 # Synchronize catalog with cloud image list
 class UpdateCatalog(APIView):
     def get(self, request):
-        globalVars.init()
-        my_token_id = cloudAuth.auth()
-        update.updateCatalog(my_token_id)
+        cloudAdapter.updateCatalog()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def post(self):
