@@ -51,12 +51,13 @@ class Instance(models.Model):
         return self.name
 
 
-def add_instance(username, image_id, compute_id, ip_address, instance_name):
+def add_instance(username, image_id, compute_id, ip_address, instance_name, cloud):
     new_instance = Instance(user=User.objects.get(username=username),
                             image=Image.objects.get(cloudId=image_id),
                             computeId=compute_id,
                             ipaddr=ip_address,
-                            name=instance_name)
+                            name=instance_name,
+			    cloud=cloud)
     new_instance.save()
 
 

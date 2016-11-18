@@ -46,13 +46,10 @@ class Register(APIView):
             print request.data['api_uname'] + " " + request.data['api_pass']
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-        globalVars.init()
-        my_token_id = cloudAuth.auth()
         status_response = register.registerUser(request.data['username'],
                                                 request.data['email'],
                                                 request.data['preferred_pass'],
-                                                request.data['external_id'],
-                                                my_token_id)
+                                                request.data['external_id'])
         return Response(status=status_response)
 
 
@@ -79,13 +76,11 @@ class RebuildLab(APIView):
                         request.data['api_pass']) is False:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         this_ip = request.data['ipaddress']
-        globalVars.init()
-        my_token_id = cloudAuth.auth()
         my_instance = Instance.objects.get(ipaddr=this_ip)
-        response = cloudCompute.rebuild_vm(my_token_id,
-                                           my_instance.computeId,
-                                           my_instance.image.cloudId,
-                                           my_instance.name)
+	response = cloudAdapter.rebuild_vm(my_instance.computeId,
+	                                   my_instance.image.cloudId,
+					   my_instance.name,
+					   my_instance.cloud.name)
         return Response(response)
 
 
@@ -99,11 +94,9 @@ class Enroll(APIView):
                         request.data['api_pass']) is False:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-        globalVars.init()
-        my_token_id = cloudAuth.auth()
         response = register.enroll_user(request.data['external_id'],
-                                        request.data['image_id'],
-                                        my_token_id)
+                                        request.data['image_name'],
+                                        request.data['cloud'])
         return Response(request.data, response)
 
 '''
