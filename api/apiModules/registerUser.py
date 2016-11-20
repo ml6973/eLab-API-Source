@@ -39,7 +39,10 @@ def registerUser(uname, email, preferred_pass, external_id):
         return status.HTTP_500_INTERNAL_SERVER_ERROR
     '''
 
-    return status.HTTP_201_CREATED
+    if created is True:
+        return status.HTTP_201_CREATED
+    else:
+        return status.HTTP_200_OK
 
 
 def enroll_user(user_id, image_name, cloud):
@@ -51,14 +54,25 @@ def enroll_user(user_id, image_name, cloud):
     uname = this_user.username
     preferred_pass = this_user_profile.preferred_pass
 
-    # create config file and encode in base64 to pass to vm
-    create_config(uname, preferred_pass)
-    call("base64 cfg.sh > cfgb64.sh", shell=True)
-
     # grab image object from image_id
     cloudObject = Cloud.objects.get(name=cloud)
     this_image = Image.objects.get(name=image_name, cloud=cloudObject.id)
     instance_name = uname + '-' + str(this_image.name)
+
+    # check if the user already has an instance running
+    exists = True
+    try:
+        checkInstance = Instance.objects.get(user=this_user, image=this_image)
+    except Instance.DoesNotExist:
+        exists = False
+    
+    if (exists):
+        return status.HTTP_200_OK
+
+
+    # create config file and encode in base64 to pass to vm
+    create_config(uname, preferred_pass)
+    call("base64 cfg.sh > cfgb64.sh", shell=True)
 
     # create lab environment, save compute id(unique) of this instance
     this_compute_id = cloudAdapter.boot_vm(instance_name, this_image.cloudId, cloud)
