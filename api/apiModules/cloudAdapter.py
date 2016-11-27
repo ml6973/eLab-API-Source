@@ -4,15 +4,17 @@ from api.models import Cloud
 import api.cloudModules.cloudAuth as cloudAuth
 import api.cloudModules.cloudCompute as cloudCompute
 import api.cloudModules.cloudImages as cloudImages
+import api.cloudModules.aws.awsAuth as awsAuth
+import api.cloudModules.aws.awsImages as awsImages
 import json
 
 # These functions allow for multi-cloud support by allowing single function calls for shared cloud commands
 
 # Updates the catalog from all clouds
 def updateCatalog():
+    globalVars.init()
 
     #Update the catalog from Chameleon
-    globalVars.init()
     my_token_id = cloudAuth.auth()
     r = cloudImages.getImageList(my_token_id)
     print json.dumps(r.json(), indent=4)
@@ -27,6 +29,20 @@ def updateCatalog():
 	                                       image['id'],
 					       image['name'],
 					       this_description)
+
+
+    #Update the catalog from AWS
+    client = awsAuth.auth(globalVars.awsAccess, 
+                          globalVars.awsSecret, 
+                          globalVars.awsRegion)
+    images = awsImages.getImageList(client)
+    cloud = Cloud.objects.get(name='aws')
+    for image in images:
+        print image
+        modelFunctions.get_or_create_image(cloud,
+	                                   image['ImageId'],
+					   image['Name'],
+					   image['Description'])
 
 
 # Boots a VM, cloud used is dependent on the request

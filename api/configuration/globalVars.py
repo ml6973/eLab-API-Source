@@ -58,6 +58,12 @@ def init():
     except ConfigParser.NoOptionError:
          pass
 
+    global awsRegion
+    try:
+        awsRegion = config.get('GlobalInformation', 'awsRegion')
+    except ConfigParser.NoOptionError:
+        pass
+
 
 def get_config():
     global config

@@ -11,9 +11,7 @@ from rest_framework import status
 
 from api.models import Cloud, Image, Instance, UserProfile
 import api.apiModules.cloudAdapter as cloudAdapter
-import api.cloudModules.cloudAuth as cloudAuth
 import api.cloudModules.cloudCompute as cloudCompute
-import api.cloudModules.cloudImages as cloudImages
 import api.configuration.globalVars as globalVars
 import api.models as modelFunctions
 
