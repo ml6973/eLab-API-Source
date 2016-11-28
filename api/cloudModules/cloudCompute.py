@@ -1,4 +1,5 @@
 import requests
+import time
 import json
 import api.configuration.globalVars as globalVars
 
@@ -30,7 +31,19 @@ def boot_vm(token_id, name, imageid):
 
     r = requests.post(url2, json_body, headers=my_headers)
     print json.dumps(r.json(), indent=4)
-    return r.json()['server']['id']
+
+    this_compute_id = r.json()['server']['id']
+ 
+    # continually sleeps until cloud has fully populated the response with
+    # the data we need
+    time.sleep(5)
+    response = query_vm(token_id, this_compute_id)
+    while(response.json()['server']['OS-EXT-STS:task_state'] != None):
+        time.sleep(5)
+        response = query_vm(token_id, this_compute_id)
+
+
+    return this_compute_id
 
 
 # Delete VM from cloud

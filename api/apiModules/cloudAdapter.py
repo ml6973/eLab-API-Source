@@ -6,7 +6,9 @@ import api.cloudModules.cloudCompute as cloudCompute
 import api.cloudModules.cloudImages as cloudImages
 import api.cloudModules.aws.awsAuth as awsAuth
 import api.cloudModules.aws.awsImages as awsImages
+import api.cloudModules.aws.awsCompute as awsCompute
 import json
+from rest_framework import status
 
 # These functions allow for multi-cloud support by allowing single function calls for shared cloud commands
 
@@ -32,7 +34,7 @@ def updateCatalog():
 
 
     #Update the catalog from AWS
-    client = awsAuth.auth(globalVars.awsAccess, 
+    client = awsAuth.authClient(globalVars.awsAccess, 
                           globalVars.awsSecret, 
                           globalVars.awsRegion)
     images = awsImages.getImageList(client)
@@ -47,12 +49,21 @@ def updateCatalog():
 
 # Boots a VM, cloud used is dependent on the request
 def boot_vm(instance_name, cloudId, cloud):
-   
+   globalVars.init()
+
    # Chameleon Cloud instance booting
    if (cloud == "chameleon"):
-       globalVars.init()
        my_token_id = cloudAuth.auth()
        instanceId = cloudCompute.boot_vm(my_token_id, instance_name, cloudId)
+       return instanceId
+
+
+   # AWS instance booting
+   if (cloud == "aws"):
+       resource = awsAuth.authResource(globalVars.awsAccess,
+                                       globalVars.awsSecret, 
+			               globalVars.awsRegion)
+       instanceId = awsCompute.boot_vm(resource, instance_name, cloudId)
        return instanceId
 
 
@@ -68,14 +79,24 @@ def query_vm(computeId, cloud):
 
 
 # Retrieves an available floating IP address from a specific cloud
-def get_unused_floating_ip(cloud):
-
-    # Chameleon Cloud floating ip retrival
+def get_unused_floating_ip(cloud, computeId):
+    globalVars.init()
+    
+    # Chameleon Cloud floating ip retrieval
     if (cloud == "chameleon"):
-        globalVars.init()
 	my_token_id = cloudAuth.auth()
 	floatingIp = cloudCompute.get_unused_floating_ip(my_token_id)
 	return floatingIp
+
+
+    # AWS Cloud floating ip retrieval
+    if (cloud == "aws"):
+        # AWS can assign floating IPs automatically, we simply return it
+	resource = awsAuth.authResource(globalVars.awsAccess,
+	                                globalVars.awsSecret,
+					globalVars.awsRegion)
+	floatIp = awsCompute.get_IP(resource, computeId)
+	return floatIp
 
 
 # Associates the given floating IP to the specified instance
@@ -87,6 +108,12 @@ def associate_floating_ip(computeId, floating_ip, cloud):
 	my_token_id = cloudAuth.auth()
 	cloudCompute.associate_floating_ip(my_token_id, computeId, floating_ip)
 	return
+
+
+    # AWS Cloud floating ip association
+    if (cloud == "aws"):
+        # Using a dummy function as AWS associates floating IPs automatically
+        return
 
 
 # Rebuilds a VM from the base image
@@ -101,3 +128,8 @@ def rebuild_vm(computeId, imageId, instanceName, cloud):
 					   imageId,
 					   instanceName)
 	return response
+
+    # AWS Cloud rebuild VM
+    # AWS Does not support direct rebuilding, using a dummy function
+    if (cloud == "aws"):
+        return status.HTTP_200_OK

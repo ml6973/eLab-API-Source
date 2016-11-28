@@ -1,4 +1,3 @@
-import time
 import string
 import random
 import getpass
@@ -75,15 +74,6 @@ def enroll_user(user_id, image_name, cloud):
     # create lab environment, save compute id(unique) of this instance
     this_compute_id = cloudAdapter.boot_vm(instance_name, this_image.cloudId, cloud)
 
-    # continually sleeps until cloud has fully populated the response with
-    # the data we need
-    time.sleep(5)
-    response = cloudAdapter.query_vm(this_compute_id, cloud)
-
-    while(response.json()['server']['OS-EXT-STS:task_state'] != None):
-        time.sleep(5)
-	response = cloudAdapter.query_vm(this_compute_id, cloud)
-
     # ip address set to 0.0.0.0 before floating ip is assigned
     ipaddr = '0.0.0.0'
 
@@ -94,7 +84,7 @@ def enroll_user(user_id, image_name, cloud):
     this_instance = Instance.objects.get(computeId=this_compute_id)
 
     # find an unused floating ip and assign it to this vm
-    floating_ip = cloudAdapter.get_unused_floating_ip(cloud)
+    floating_ip = cloudAdapter.get_unused_floating_ip(cloud, this_compute_id)
     print floating_ip
 
     if floating_ip is not None:
