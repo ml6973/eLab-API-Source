@@ -1,1 +1,1 @@
-echo "LONG TEST"
+echo "NEED TO WRITE LONG TESTS"
