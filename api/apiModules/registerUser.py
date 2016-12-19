@@ -120,6 +120,28 @@ def create_new_user_instances(uname, my_token_id):
 
 
 '''
+def unenroll_user(user_id, image_name):
+    # grab user profile object and user object from user_id
+    this_user_profile = UserProfile.objects.get(external_id=user_id)
+    this_user = this_user_profile.user
+
+    # grab instance object from user object
+    images = Image.objects.filter(name=image_name)
+
+    for image in images:
+        try:
+            InstanceObject = Instance.objects.get(user=this_user, image=image)
+	except Instance.DoesNotExist:
+	    InstanceObject = None
+	if InstanceObject is not None:
+	    cloud = InstanceObject.cloud.name
+	    cloudAdapter.delete_vm(InstanceObject.computeId, cloud)
+	    InstanceObject.delete()
+	    return status.HTTP_200_OK
+    
+    return status.HTTP_404_NOT_FOUND
+
+
 def delete_user(uname, my_token_id):
     # first delete all labs for this user on the cloud
     for this_instance in Instance.objects.filter(

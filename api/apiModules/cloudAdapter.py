@@ -133,3 +133,22 @@ def rebuild_vm(computeId, imageId, instanceName, cloud):
     # AWS Does not support direct rebuilding, using a dummy function
     if (cloud == "aws"):
         return status.HTTP_200_OK
+
+
+# Deletes a VM
+def delete_vm(computeId, cloud):
+    # Chameleon Cloud Termination
+    if (cloud == "chameleon"):
+        globalVars.init()
+	my_token_id = cloudAuth.auth()
+        cloudCompute.delete_vm(my_token_id, computeId)
+	return status.HTTP_200_OK
+
+    # AWS Cloud Termination
+    if (cloud == "aws"):
+       globalVars.init()
+       resource = awsAuth.authResource(globalVars.awsAccess,
+                                       globalVars.awsSecret,
+				       globalVars.awsRegion)
+       awsCompute.delete_vm(resource, computeId)
+       return

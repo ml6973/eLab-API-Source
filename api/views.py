@@ -99,6 +99,21 @@ class Enroll(APIView):
                                         request.data['cloud'])
         return Response(request.data, response)
 
+
+# Unenrolls a user in a class, terminals the instance for that user for that class
+class Unenroll(APIView):
+    def get(self, request):
+        pass
+
+    def post(self, request):
+       if apiAuth.auth(request.data['api_uname'],
+                       request.data['api_pass']) is False:
+           return Response(status=status.HTTP_401_UNAUTHORIZED)
+       
+       response = register.unenroll_user(request.data['external_id'],
+                                         request.data['image_name'])
+       return Response(request.data, response)
+
 '''
 class FloatingIpList(APIView):
     def get(self, request):

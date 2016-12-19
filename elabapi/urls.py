@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^lablist/', views.LabList.as_view()),
     url(r'^rebuildlab/', views.RebuildLab.as_view()),
     url(r'^enroll/', views.Enroll.as_view()),
+    url(r'^unenroll/', views.Unenroll.as_view()),
     # url(r'^getips/', views.FloatingIpList.as_view())
 ]
 

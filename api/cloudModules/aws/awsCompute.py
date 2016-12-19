@@ -37,3 +37,11 @@ def boot_vm(resource, name, imageid):
 def get_IP(resource, computeId):
     instance = resource.Instance(computeId)
     return instance.public_ip_address
+
+
+def delete_vm(resource, computeId):
+   instance = resource.Instance(computeId)
+   instance.terminate()
+
+   #Wait for instance to be terminated
+   instance.wait_until_terminated()
