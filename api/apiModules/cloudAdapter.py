@@ -7,6 +7,9 @@ import api.cloudModules.cloudImages as cloudImages
 import api.cloudModules.aws.awsAuth as awsAuth
 import api.cloudModules.aws.awsImages as awsImages
 import api.cloudModules.aws.awsCompute as awsCompute
+import api.cloudModules.jetstream.jetAuth as jetAuth
+import api.cloudModules.jetstream.jetCompute as jetCompute
+import api.cloudModules.jetstream.jetImages as jetImages
 import json
 from rest_framework import status
 
@@ -46,6 +49,24 @@ def updateCatalog():
 					   image['Name'],
 					   image['Description'])
 
+    #Update the catalog from JetStream
+    my_token_id = jetAuth.auth()
+    r = jetImages.getImageList(my_token_id)
+    print r
+    print json.dumps(r.json(), indent=4)
+    cloud = Cloud.objects.get(name='jetstream')
+    for image in r.json()['images']:
+        if image['owner'] == globalVars.jetstreamTenantID:
+            this_description = ""
+
+            if 'description' in image:
+                this_description = image['description']
+            modelFunctions.get_or_create_image(cloud,
+                                               image['id'],
+                                               image['name'],
+                                               this_description)
+
+
 
 # Boots a VM, cloud used is dependent on the request
 def boot_vm(instance_name, cloudId, cloud):
@@ -55,6 +76,13 @@ def boot_vm(instance_name, cloudId, cloud):
    if (cloud == "chameleon"):
        my_token_id = cloudAuth.auth()
        instanceId = cloudCompute.boot_vm(my_token_id, instance_name, cloudId)
+       return instanceId
+
+
+   # Jetstream instance booting
+   if (cloud == "jetstream"):
+       my_token_id = jetAuth.auth()
+       instanceId = jetCompute.boot_vm(my_token_id, instance_name, cloudId)
        return instanceId
 
 
@@ -77,6 +105,14 @@ def query_vm(computeId, cloud):
        response = cloudCompute.query_vm(my_token_id, computeId)
        return response
 
+    # Jetstream instance querying
+    if (cloud == "jetstream"):
+       globalVars.init()
+       my_token_id = jetAuth.auth()
+       response = jetCompute.query_vm(my_token_id, computeId)
+       return response
+
+
 
 # Retrieves an available floating IP address from a specific cloud
 def get_unused_floating_ip(cloud, computeId):
@@ -86,6 +122,13 @@ def get_unused_floating_ip(cloud, computeId):
     if (cloud == "chameleon"):
 	my_token_id = cloudAuth.auth()
 	floatingIp = cloudCompute.get_unused_floating_ip(my_token_id)
+	return floatingIp
+
+
+    # Jetstream floating ip retrieval
+    if (cloud == "jetstream"):
+	my_token_id = jetAuth.auth()
+	floatingIp = jetCompute.get_unused_floating_ip(my_token_id)
 	return floatingIp
 
 
@@ -110,6 +153,14 @@ def associate_floating_ip(computeId, floating_ip, cloud):
 	return
 
 
+    # Jetstream floating ip association
+    if (cloud == "jetstream"):
+        globalVars.init()
+	my_token_id = jetAuth.auth()
+	jetCompute.associate_floating_ip(my_token_id, computeId, floating_ip)
+	return
+
+
     # AWS Cloud floating ip association
     if (cloud == "aws"):
         # Using a dummy function as AWS associates floating IPs automatically
@@ -129,6 +180,16 @@ def rebuild_vm(computeId, imageId, instanceName, cloud):
 					   instanceName)
 	return response
 
+    # Jetstream rebuild VM
+    if (cloud == "jetstream"):
+        globalVars.init()
+	my_token_id = jetAuth.auth()
+	response = jetCompute.rebuild_vm(my_token_id,
+	                                   computeId,
+					   imageId,
+					   instanceName)
+	return response
+
     # AWS Cloud rebuild VM
     # AWS Does not support direct rebuilding, using a dummy function
     if (cloud == "aws"):
@@ -142,6 +203,13 @@ def delete_vm(computeId, cloud):
         globalVars.init()
 	my_token_id = cloudAuth.auth()
         cloudCompute.delete_vm(my_token_id, computeId)
+	return status.HTTP_200_OK
+
+    # Jetstream Termination
+    if (cloud == "jetstream"):
+        globalVars.init()
+	my_token_id = jetAuth.auth()
+        jetCompute.delete_vm(my_token_id, computeId)
 	return status.HTTP_200_OK
 
     # AWS Cloud Termination

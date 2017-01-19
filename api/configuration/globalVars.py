@@ -64,6 +64,56 @@ def init():
     except ConfigParser.NoOptionError:
         pass
 
+    
+    global jetstreamAuthURL
+    try:
+        jetstreamAuthURL = config.get('GlobalInformation', 'jetstreamAuthURL')
+    except ConfigParser.NoOptionError:
+        pass
+
+    global jetstreamComputeURL
+    try:
+        jetstreamComputeURL = config.get('GlobalInformation', 'jetstreamComputeURL')
+    except ConfigParser.NoOptionError:
+        pass
+
+    global jetstreamBaseURL
+    try:
+        jetstreamBaseURL = config.get('GlobalInformation', 'jetstreamBaseURL')
+    except ConfigParser.NoOptionError:
+        pass
+
+    global jetstreamComputeURL2
+    try:
+        jetstreamComputeURL2 = config.get('GlobalInformation', 'jetstreamComputeURL2')
+    except ConfigParser.NoOptionError:
+         pass
+
+    global jetstreamTenantID
+    try:
+        jetstreamTenantID = config.get('GlobalInformation', 'jetstreamTenantID')
+    except ConfigParser.NoOptionError:
+        pass
+
+    global jetstreamNetworkID
+    try:
+        jetstreamNetworkID = config.get('GlobalInformation', 'jetstreamNetworkID')
+    except ConfigParser.NoOptionError:
+        pass
+
+    global jetstreamCloudUsername
+    try:
+        jetstreamCloudUsername = config.get('GlobalInformation', 'jetstreamCloudUsername')
+    except ConfigParser.NoOptionError:
+        pass
+
+    global jetstreamCloudPassword
+    try:
+        jetstreamCloudPassword = config.get('GlobalInformation', 'jetstreamCloudPassword')
+    except ConfigParser.NoOptionError:
+        pass
+
+
 
 def get_config():
     global config
