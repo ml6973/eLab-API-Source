@@ -18,8 +18,11 @@ def emailRegistration(email):
     server.starttls()
     server.login(globalVars.emailUser, globalVars.emailPass)
     text = msg.as_string()
-    server.sendmail(globalVars.emailUser, email, text)
-    server.quit()
+    try:
+       server.sendmail(globalVars.emailUser, email, text)
+       server.quit()
+    except:
+       pass
 
 
 def emailEnroll(email, courseName):
@@ -36,8 +39,11 @@ def emailEnroll(email, courseName):
     server.starttls()
     server.login(globalVars.emailUser, globalVars.emailPass)
     text = msg.as_string()
-    server.sendmail(globalVars.emailUser, email, text)
-    server.quit()
+    try:
+       server.sendmail(globalVars.emailUser, email, text)
+       server.quit()
+    except:
+       pass
 
 
 def emailUnenroll(email, courseName):
@@ -54,5 +60,8 @@ def emailUnenroll(email, courseName):
     server.starttls()
     server.login(globalVars.emailUser, globalVars.emailPass)
     text = msg.as_string()
-    server.sendmail(globalVars.emailUser, email, text)
-    server.quit()
+    try:
+       server.sendmail(globalVars.emailUser, email, text)
+       server.quit()
+    except:
+       pass
