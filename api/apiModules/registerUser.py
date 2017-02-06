@@ -9,6 +9,7 @@ from subprocess import call
 from rest_framework import status
 
 from api.models import Cloud, Image, Instance, UserProfile
+import api.apiModules.emailUser as emailUser
 import api.apiModules.cloudAdapter as cloudAdapter
 import api.cloudModules.cloudCompute as cloudCompute
 import api.configuration.globalVars as globalVars
@@ -37,6 +38,7 @@ def registerUser(uname, email, preferred_pass, external_id):
     '''
 
     if created is True:
+        emailUser.emailRegistration(email)
         return status.HTTP_201_CREATED
     else:
         return status.HTTP_200_OK
@@ -95,6 +97,7 @@ def enroll_user(user_id, image_name, cloud):
         print "All Floating IPs are in use. Please add more to the pool."
         return status.HTTP_500_INTERNAL_SERVER_ERROR
 
+    emailUser.emailEnroll(this_user.email, this_image.description)
     return status.HTTP_201_CREATED
 
 
@@ -137,6 +140,7 @@ def unenroll_user(user_id, image_name):
 	    cloud = InstanceObject.cloud.name
 	    cloudAdapter.delete_vm(InstanceObject.computeId, cloud)
 	    InstanceObject.delete()
+	    emailUser.emailUnenroll(this_user.email, image.description)
 	    return status.HTTP_200_OK
     
     return status.HTTP_404_NOT_FOUND

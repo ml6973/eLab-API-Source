@@ -46,6 +46,18 @@ def init():
     except ConfigParser.NoOptionError:
          pass
 
+    global emailServer
+    emailServer = config.get('GlobalInformation', 'emailServer')
+    
+    global emailPort
+    emailPort = config.get('GlobalInformation', 'emailPort')
+    
+    global emailUser
+    emailUser = config.get('GlobalInformation', 'emailUser')
+    
+    global emailPass
+    emailPass = config.get('GlobalInformation', 'emailPass')
+
     global awsAccess
     try:
          awsAccess = config.get('GlobalInformation', 'awsAccess')
