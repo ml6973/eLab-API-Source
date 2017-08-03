@@ -34,6 +34,98 @@ def init():
     global masterKey
     masterKey = config.get('GlobalInformation', 'masterKey')
 
+    global apiUser
+    try:
+        apiUser = config.get('GlobalInformation', 'apiUser')
+    except ConfigParser.NoOptionError:
+        pass
+
+    global apiPass
+    try:
+        apiPass = config.get('GlobalInformation', 'apiPass')
+    except ConfigParser.NoOptionError:
+         pass
+
+    global emailServer
+    emailServer = config.get('GlobalInformation', 'emailServer')
+    
+    global emailPort
+    emailPort = config.get('GlobalInformation', 'emailPort')
+    
+    global emailUser
+    emailUser = config.get('GlobalInformation', 'emailUser')
+    
+    global emailPass
+    emailPass = config.get('GlobalInformation', 'emailPass')
+
+    global awsAccess
+    try:
+         awsAccess = config.get('GlobalInformation', 'awsAccess')
+    except ConfigParser.NoOptionError:
+         pass
+
+    global awsSecret
+    try:
+         awsSecret = config.get('GlobalInformation', 'awsSecret')
+    except ConfigParser.NoOptionError:
+         pass
+
+    global awsRegion
+    try:
+        awsRegion = config.get('GlobalInformation', 'awsRegion')
+    except ConfigParser.NoOptionError:
+        pass
+
+    
+    global jetstreamAuthURL
+    try:
+        jetstreamAuthURL = config.get('GlobalInformation', 'jetstreamAuthURL')
+    except ConfigParser.NoOptionError:
+        pass
+
+    global jetstreamComputeURL
+    try:
+        jetstreamComputeURL = config.get('GlobalInformation', 'jetstreamComputeURL')
+    except ConfigParser.NoOptionError:
+        pass
+
+    global jetstreamBaseURL
+    try:
+        jetstreamBaseURL = config.get('GlobalInformation', 'jetstreamBaseURL')
+    except ConfigParser.NoOptionError:
+        pass
+
+    global jetstreamComputeURL2
+    try:
+        jetstreamComputeURL2 = config.get('GlobalInformation', 'jetstreamComputeURL2')
+    except ConfigParser.NoOptionError:
+         pass
+
+    global jetstreamTenantID
+    try:
+        jetstreamTenantID = config.get('GlobalInformation', 'jetstreamTenantID')
+    except ConfigParser.NoOptionError:
+        pass
+
+    global jetstreamNetworkID
+    try:
+        jetstreamNetworkID = config.get('GlobalInformation', 'jetstreamNetworkID')
+    except ConfigParser.NoOptionError:
+        pass
+
+    global jetstreamCloudUsername
+    try:
+        jetstreamCloudUsername = config.get('GlobalInformation', 'jetstreamCloudUsername')
+    except ConfigParser.NoOptionError:
+        pass
+
+    global jetstreamCloudPassword
+    try:
+        jetstreamCloudPassword = config.get('GlobalInformation', 'jetstreamCloudPassword')
+    except ConfigParser.NoOptionError:
+        pass
+
+
 
 def get_config():
     global config

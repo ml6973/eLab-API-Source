@@ -1,2 +1,5 @@
 *.pyc
 *.sqlite3
+*.sh
+*.swp
+config.txt

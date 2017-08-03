@@ -7,7 +7,7 @@ import api.configuration.globalVars as globalVars
 # Boot a virtual machine (lab environment) and return compute id
 def boot_vm(token_id, name, imageid):
     # Replaces {0} from config file with the appropriate tenant id
-    url2 = globalVars.computeURL.format(globalVars.tenant_id)
+    url2 = globalVars.jetstreamComputeURL.format(globalVars.jetstreamTenantID)
 
     with open('cfgb64.sh', 'r') as configfile:
         config_b64 = configfile.read()
@@ -20,7 +20,7 @@ def boot_vm(token_id, name, imageid):
                 "name": name,
                 "imageRef": imageid,
                 "flavorRef": "3",
-                "networks": [{"uuid": globalVars.networkID}],
+                "networks": [{"uuid": globalVars.jetstreamNetworkID}],
                 "user_data": config_b64
                 }
             }
@@ -48,7 +48,7 @@ def boot_vm(token_id, name, imageid):
 
 # Delete VM from cloud
 def delete_vm(token_id, server_id):
-    url = globalVars.computeURL.format(globalVars.tenant_id) + '/' + server_id
+    url = globalVars.jetstreamComputeURL.format(globalVars.jetstreamTenantID) + '/' + server_id
 
     my_headers = {"Content-Type": 'application/json', "X-Auth-Token": token_id}
 
@@ -58,7 +58,7 @@ def delete_vm(token_id, server_id):
 
 # Check cloud for available floating IPs, return first unused
 def get_unused_floating_ip(token_id):
-    url = (globalVars.computeURL2.format(globalVars.tenant_id) +
+    url = (globalVars.jetstreamComputeURL2.format(globalVars.jetstreamTenantID) +
            '/os-floating-ips')
 
     my_headers = {"Content-Type": 'application/json', "X-Auth-Token": token_id}
@@ -81,7 +81,7 @@ def get_unused_floating_ip(token_id):
 
 # Assign floating IP to a given instance
 def associate_floating_ip(token_id, server_id, this_floating_ip):
-    url = (globalVars.computeURL.format(globalVars.tenant_id) + '/' +
+    url = (globalVars.jetstreamComputeURL.format(globalVars.jetstreamTenantID) + '/' +
            server_id + '/action')
 
     my_headers = {"Content-Type": 'application/json', "X-Auth-Token": token_id}
@@ -97,7 +97,7 @@ def associate_floating_ip(token_id, server_id, this_floating_ip):
 
 # Query cloud for various VM info, print to console
 def query_vm(token_id, server_id):
-    url = globalVars.computeURL.format(globalVars.tenant_id) + '/' + server_id
+    url = globalVars.jetstreamComputeURL.format(globalVars.jetstreamTenantID) + '/' + server_id
 
     my_headers = {"Content-Type": 'application/json', "X-Auth-Token": token_id}
 
@@ -109,7 +109,7 @@ def query_vm(token_id, server_id):
 
 # Reset VM to base image
 def rebuild_vm(token_id, server_id, image_id, name):
-    url = (globalVars.computeURL.format(globalVars.tenant_id) + '/' +
+    url = (globalVars.jetstreamComputeURL.format(globalVars.jetstreamTenantID) + '/' +
            server_id + '/action')
 
     body = {

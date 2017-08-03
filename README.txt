@@ -51,14 +51,28 @@ EXAMPLE POST:
 Return: HTTP Code 200
 
 (POST) /enroll/
-Enroll a user into a class. Builds a lab environment (Virtual Machine) based on the image id. Image id's uniquely identify classes.
-Usage: Send JSON object with 'external_id' and 'image_id'
+Enroll a user into a class. Builds a lab environment (Virtual Machine) based on the image name. Image name's uniquely identify classes.
+Usage: Send JSON object with 'external_id', 'image_name', and 'cloud'
 EXAMPLE JSON:
 	{
 		"api_uname":"webportal", 
 		"api_pass":"greg123",
 		"external_id":"3",
-		"image_id":"8d26713b-605f-4a63-83cc-ff9b92b7b31b"
+		"image_name":"cirros",
+		"cloud":"chameleon"
 	}
 EXAMPLE POST:
-	curl -X POST http://127.0.0.1:8000/enroll/ -d '{"api_uname":"webportal", "api_pass":"greg123","external_id":"5","image_id":"8d26713b-605f-4a63-83cc-ff9b92b7b31b"}' -H "Content-Type: application/json"
+	curl -X POST http://127.0.0.1:8000/enroll/ -d '{"api_uname":"webportal", "api_pass":"greg123","external_id":"5","image_name":"cirros", "cloud":"chameleon"}' -H "Content-Type: application/json"
+
+(POST) /unenroll/
+Unenroll a user from a class. Removes a lab environment (Virtual Machine) based on the image name. Image name's uniquely identify classes.
+Usage: Send JSON object with 'external_id', and 'image_name'
+EXAMPLE JSON:
+	{
+		"api_uname":"webportal", 
+		"api_pass":"greg123",
+		"external_id":"3",
+		"image_name":"cirros"
+	}
+EXAMPLE POST:
+	curl -X POST http://127.0.0.1:8000/unenroll/ -d '{"api_uname":"webportal", "api_pass":"greg123","external_id":"5","image_name":"cirros"}' -H "Content-Type: application/json"
